@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: client-service
+
+server:
+  port: 9001
+  ssl:
+    enabled: true
+    client-auth: need
+    key-store: classpath:client-service.jks
+    key-store-password: client-service
+    key-alias: client-service
+    key-store-type: JKS
+    key-store-provider: SUN
+    trust-store: classpath:client-service.jks
+    trust-store-password: client-service
+    trust-store-type: JKS
+
+endpoint:
+  server-service: https://localhost:9002/server-service/getResponse
+

@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: server-service
+
+server:
+  port: 9002
+  ssl:
+    enabled: true
+    client-auth: need
+    key-store: classpath:server-service.jks
+    key-store-password: server-service
+    key-alias: server-service
+    key-store-type: JKS
+    key-store-provider: SUN
+    trust-store: classpath:server-service.jks
+    trust-store-password: server-service
+    trust-store-type: JKS
