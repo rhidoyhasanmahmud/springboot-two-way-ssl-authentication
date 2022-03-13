@@ -53,6 +53,36 @@ The below image explains the same in the pictorial format:
 
 ![Two-way-ssl-communication](images/2-way-ssl.png)
 
+### Terminology:
+
+##### SSL handshakes:
+
+SSL handshakes are a mechanism by which a client and server establish the trust and logistics required to secure their connection over the network.
+
+##### The Handshake in One-way SSL:
+
+If we refer to the steps mentioned above, step two mentions the certificate exchange. One-way SSL requires that a client can trust the server through its public certificate. This leaves the server to trust all clients that request a connection. There is no way for a server to request and validate the public certificate from clients which can pose a security risk.
+
+##### The Handshake in Two-way SSL:
+
+With one-way SSL, the server must trust all clients. But two-way SSL adds the ability for the server to be able to establish trusted clients as well. During a two-way handshake, both the client and server must present and accept each other's public certificates before a successful connection can be established.
+
+##### Keystore:
+
+Keystore is used to store private key and identity certificates that a specific program should present to both parties (server and client) for verification.
+
+##### Truststore:
+
+Truststore is used to store certificates from Certified Authorities (CA) that verify the certificate presented by the server in SSL connection.
+
+##### Keystore vs Truststore
+
+A Keystore contains private keys and certificates with their corresponding public keys. A truststore contains certificates from other parties that you expect to communicate with, or from Certificate Authorities that you trust to identify other parties.
+
+1. Keystore stores your credential. (Server or client) but Truststore stores other credentials (CA).
+2. Keystore is needed when you are setting up the server-side on SSL, but Truststore setup is required for the successful connection at the client-side.
+3. Keystore contains private and sensitive information, but Truststore doesn’t contain private and sensitive information.
+
 > > Project Implementation Process
 
 ## Create Self signed Certificate for Client and Server
