@@ -1,9 +1,66 @@
-# Create Self signed Certificate for Client and Server
+> > Project Background Study:
+
+SSL (Secure Socket Layer) is the standard technology used for enabling secure communication between a client and server
+to ensure data security & integrity. SSL has evolved with time and several versions have been introduced to deal with
+any potential vulnerabilities. SSL V2 released in 1995 was the first public version of SSL followed by SSL V3 in 1996
+followed by TLS V1.0 in 1999, TLS V1.1 in 2006, and TLS V1.2 in 2008.
+
+For ensuring the security of the data being transferred between a client and server, SSL can be implemented either
+one-way or two-way.
+
+### How one-way-SSL works?
+
+In one way SSL, the only client validates the server to ensure that it receives data from the intended server. For
+implementing one-way SSL, the server shares its public certificate with the clients.
+
+Below is the high-level description of the steps involved in the establishment of connection and transfer of data
+between a client and server in case of one-way SSL:
+
+1. Client requests for some protected data from the server on HTTPS protocol. This initiates SSL/TLS handshake process.
+2. Server returns its public certificate to the client along with server hello message.
+3. Client validates/verifies the received certificate. The client verifies the certificate through the certification
+   authority (CA) for CA-signed certificates.
+4. SSL/TLS client sends the random byte string that enables both the client and the server to compute the secret key to
+   be used for encrypting subsequent message data. The random byte string itself is encrypted with the server’s public
+   key.
+5. After agreeing on this secret key, the client and server communicate further for actual data transfer by
+   encrypting/decrypting data using this key.
+
+Below is the pictorial description explaining how one-way SSL works:
+
+![One-Way-SSL-Communication](images/one-way%20ssl.jpg)
+
+### How Two-Way (Mutual) SSL works?
+
+Contrary to one-way SSL; in case of two-way SSL, both client and server authenticate each other to ensure that both
+parties involved in the communication are trusted. Both parties share their public certificates to each other and then
+verification/validation is performed based on that.
+
+Below is the high-level description of the steps involved in the establishment of connection and transfer of data
+between a client and server in the case of two-way SSL:
+
+1. Client requests a protected resource over HTTPS protocol and the SSL/TSL handshake process begins.
+2. Server returns its public certificate to the client along with server hello.
+3. Client validates/verifies the received certificate. The client verifies the certificate through the certification
+   authority (CA) for CA-signed certificates.
+4. If the Server certificate was validated successfully, the client will provide its public certificate to the server.
+5. Server validates/verifies the received certificate. The server verifies the certificate through the certification
+   authority (CA) for CA-signed certificates.
+6. After completion of the handshake process, the client and server communicate and transfer data with each other
+   encrypted with the secret keys shared between the two during the handshake.
+
+The below image explains the same in the pictorial format:
+
+![Two-way-ssl-communication](images/2-way-ssl.png)
+
+> > Project Implementation Process
+
+## Create Self signed Certificate for Client and Server
 
 ### Client Self signed Certificate:
 
 ```text
-keytool -genkeypair -alias client-service -keyalg RSA -keysize 2048 -storetype JKS -keystore client-service.jks -validity 3650 -ext SAN=dns:localhost,ip:127.0.0.1 
+keytool -genkeypair -alias client-service -keyalg RSA -keysize 2048 -storetype JKS -keystore client-service.jks -validity 3650 -ext SAN=dns:localhost,ip:127.0.0.1
 ```
 
 ### Server Self signed Certificate:
@@ -47,8 +104,10 @@ keytool -import -alias server-service -file server-service.crt -keystore client-
 
 # Configure Server For 2 Way SSL:
 
-1. Firstly, Copy final server jks file (in my case, server-service.jks) to the src/main/resources/ folder of server-service application.
-2. Secondly, copy final client jks (in my case client-service.jks) to src/main/resources/ folder of client-service application.
+1. Firstly, Copy final server jks file (in my case, server-service.jks) to the src/main/resources/ folder of
+   server-service application.
+2. Secondly, copy final client jks (in my case client-service.jks) to src/main/resources/ folder of client-service
+   application.
 
 ### Add the entries shown below in application.yml into client-service
 
@@ -82,38 +141,48 @@ spring:
 server:
   port: 9002
   ssl:
-    enabled: true
+     enabled: true
     client-auth: need
-    key-store: classpath:server-service.jks
-    key-store-password: server-service
-    key-alias: server-service
-    key-store-type: JKS
-    key-store-provider: SUN
-    trust-store: classpath:server-service.jks
-    trust-store-password: server-service
-    trust-store-type: JKS
+     key-store: classpath:server-service.jks
+     key-store-password: server-service
+     key-alias: server-service
+     key-store-type: JKS
+     key-store-provider: SUN
+     trust-store: classpath:server-service.jks
+     trust-store-password: server-service
+     trust-store-type: JKS
+```
+
+Because it’s 2 way SSL. When we access gateway url in browser, our browser becomes the client to our gateway application
+and so, our gateway web app will ask the browser to present a cert for authentication.
+
+To overcome this, we will have to import a cert to our browser. But our browser can’t understand a .jks file. Instead,
+it understands PKCS12 format. So, how do we convert .jks file to PKCS12 format? Again, keytool command to the rescue!!
+
+```text
+keytool -importkeystore -srckeystore server-service.jks -destkeystore server-service.p12 -srcstoretype JKS -deststoretype PKCS12 -srcstorepass server-service-password -deststorepass server-service-password -srcalias server-service -destalias server-service -srckeypass server-service-password -destkeypass server-service-password -noprompt
 ```
 
 # Project Output Demo:
 
 > Step - 01 :: Running two Services
 
-1. Client Service Running 
-![Client-Service-Running](images/Client-Service-Running.PNG)
+1. Client Service Running
+   ![Client-Service-Running](images/Client-Service-Running.PNG)
 
 2. Server Service Running
-![Server-Service-Running](images/Server-Service-Running.PNG)
+   ![Server-Service-Running](images/Server-Service-Running.PNG)
 
 > Step - 02 :: Call Client Service To Server Service with maintain mutual SSL Communication
 
 1. Hit the API
-![Hit The API](images/Hit_On_The_API.PNG)
+   ![Hit The API](images/Hit_On_The_API.PNG)
 
 2. Client Service Console
-![Hit The API](images/Client-Service-Console.PNG)
+   ![Hit The API](images/Client-Service-Console.PNG)
 
 3. Server Service Console
-![Hit The API](images/Server-Service-Console.PNG)
+   ![Hit The API](images/Server-Service-Console.PNG)
 
 > Step - 03 :: Call Client Service To Server Service without maintain mutual SSL Communication
 
@@ -125,8 +194,3 @@ server:
 
 3. Server Service Console
    ![Hit The API](images/Server-Service-Error-Console.PNG)
-
-
-
-
-

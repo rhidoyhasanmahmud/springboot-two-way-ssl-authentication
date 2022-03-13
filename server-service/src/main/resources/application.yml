@@ -7,11 +7,11 @@ server:
   ssl:
     enabled: true
     client-auth: need
-    key-store: classpath:server-service.jks
-    key-store-password: server-service
-    key-alias: server-service
+    key-store: classpath:nt-ms.jks
+    key-store-password: nt-service
+    key-alias: nt-ms
     key-store-type: JKS
     key-store-provider: SUN
-    trust-store: classpath:server-service.jks
-    trust-store-password: server-service
+    trust-store: classpath:nt-ms.jks
+    trust-store-password: nt-service
     trust-store-type: JKS

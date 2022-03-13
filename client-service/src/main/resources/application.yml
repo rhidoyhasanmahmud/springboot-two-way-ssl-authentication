@@ -7,13 +7,13 @@ server:
   ssl:
     enabled: true
     client-auth: need
-    key-store: classpath:client-service.jks
-    key-store-password: client-service
-    key-alias: client-service
+    key-store: classpath:nt-gateway.jks
+    key-store-password: nt-gateway
+    key-alias: nt-gateway
     key-store-type: JKS
     key-store-provider: SUN
-    trust-store: classpath:client-service.jks
-    trust-store-password: client-service
+    trust-store: classpath:nt-gateway.jks
+    trust-store-password: nt-gateway
     trust-store-type: JKS
 
 endpoint:
